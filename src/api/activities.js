@@ -1,4 +1,5 @@
 const API = import.meta.env.VITE_API;
+console.log("API is:", API);
 
 /** Fetches an array of activities from the API. */
 export async function getActivities() {
@@ -33,5 +34,23 @@ export async function createActivity(token, activity) {
   if (!response.ok) {
     const result = await response.json();
     throw Error(result.message);
+  }
+}
+
+export async function deleteActivity(token, id) {
+  const response = await fetch(API + "/activities/" + id, {
+    method: "DELETE",
+    headers: { Authorization: "Bearer " + token },
+  });
+
+  if (!response.ok) {
+    let message = "Could not delete this activity.";
+    try {
+      const result = await response.json();
+      if (result.message) message = result.message;
+    } catch {
+      // no JSON body, keep the default message
+    }
+    throw Error(message);
   }
 }
